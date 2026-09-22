@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ticket Booking - Enchanted Cinema</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+            background-color: #151515;
+            color: white;
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #ff2b2b; /* Brand color */
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .step-section, .booking-details {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .screen {
+            margin: 20px auto;
+            padding: 5px;
+            border-top: 3px solid #ff2b2b; /* Brand color */
+            width: 70%;
+            font-weight: bold;
+            font-size: 18px;
+            background-color: #222; /* Background for screen */
+        }
+
+        .seat-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .seat {
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            background-color: #444; /* Neutral background for seats */
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            position: relative; /* Position relative for absolute positioning of text */
+        }
+
+        .seat.selected {
+            background-color: rgba(255, 43, 43, 0.7); /* Translucent red for selected seats */
+        }
+
+        .seat span {
+            color: white; /* Change to white for better visibility */
+            font-size: 16px; /* Size of seat number */
+            text-align: center;
+            display: block; /* Ensure it takes full width */
+        }
+
+        .booking-details {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            height: 400px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+            display: inline-block;
+            text-align: left;
+            flex-shrink: 0; /* Prevents it from squeezing */
+            max-width: 300px; /* Keeps it within limits */
+        }
+
+        .proceed-btn {
+            background: linear-gradient(to right, #ff7e00, #ffbf00);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+            border-radius: 5px;
+            display: block;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        .proceed-btn:hover {
+            background: linear-gradient(to right, #ff6600, #ffaa00);
+        }
+
+        /* Snack menu styles */
+        .snack-menu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            display: none; /* Hidden by default */
+            animation: slideIn 0.5s forwards;
+        }
+
+        .snack-menu.active {
+            display: block; /* Show when active */
+        }
+
+        .snack-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .snack-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .snack-item button {
+            margin-left: 10px;
+            background: none;
+            color: #ff7e00;
+            border: 1px solid #ff7e00;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .snack-item button:hover {
+            background: #ff7e00;
+            color: white;
+        }
+
+        /* Animation for snack menu */
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+
+        .total-price {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        /* QR Code Style */
+        .qr-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #qrcode {
+            margin-top: 15px;
+        }
+
+        #snackToggle {
+            background: linear-gradient(to right, #ff7e00, #ffbf00);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+            border-radius: 5px;
+            display: block;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        #snackToggle:hover {
+            background: linear-gradient(to right, #ff6600, #ffaa00);
+        }
+
+        #parking {
+            background: linear-gradient(to right, #ff7e00, #ffbf00);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+            border-radius: 5px;
+            display: block;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            width: 100%;
+
+        }
+        #parking:hover {
+            background: linear-gradient(to right, #ff6600, #ffaa00);
+        }
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+</head>
+<body>
+
+    <center>
+    <div class="container">
+        <div class="step-section">
+            <h1>MOVIE FLIX - Enchanted Cinema</h1>
+            <center>
+                <div class="screen">SCREEN THIS WAY</div>
+            </center>
+
+            <div class="seat-layout">
+                <div class="row">
+                    <div class="seat" data-seat="1"><span>1</span></div>
+                    <div class="seat" data-seat="2"><span>2</span></div>
+                    <div class="seat" data-seat="3"><span>3</span></div>
+                    <div class="seat" data-seat="4"><span>4</span></div>
+                    <div class="seat" data-seat="5"><span>5</span></div>
+                    <div class="seat" data-seat="6"><span>6</span></div>
+                    <div class="seat" data-seat="7"><span>7</span></div>
+                    <div class="seat" data-seat="8"><span>8</span></div>
+                    <div class="seat" data-seat="9"><span>9</span></div>
+                    <div class="seat" data-seat="10"><span>10</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="11"><span>11</span></div>
+                    <div class="seat" data-seat="12"><span>12</span></div>
+                    <div class="seat" data-seat="13"><span>13</span></div>
+                    <div class="seat" data-seat="14"><span>14</span></div>
+                    <div class="seat" data-seat="15"><span>15</span></div>
+                    <div class="seat" data-seat="16"><span>16</span></div>
+                    <div class="seat" data-seat="17"><span>17</span></div>
+                    <div class="seat" data-seat="18"><span>18</span></div>
+                    <div class="seat" data-seat="19"><span>19</span></div>
+                    <div class="seat" data-seat="20"><span>20</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="21"><span>21</span></div>
+                    <div class="seat" data-seat="22"><span>22</span></div>
+                    <div class="seat" data-seat="23"><span>23</span></div>
+                    <div class="seat" data-seat="24"><span>24</span></div>
+                    <div class="seat" data-seat="25"><span>25</span></div>
+                    <div class="seat" data-seat="26"><span>26</span></div>
+                    <div class="seat" data-seat="27"><span>27</span></div>
+                    <div class="seat" data-seat="28"><span>28</span></div>
+                    <div class="seat" data-seat="29"><span>29</span></div>
+                    <div class="seat" data-seat="30"><span>30</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="31"><span>31</span></div>
+                    <div class="seat" data-seat="32"><span>32</span></div>
+                    <div class="seat" data-seat="33"><span>33</span></div>
+                    <div class="seat" data-seat="34"><span>34</span></div>
+                    <div class="seat" data-seat="35"><span>35</span></div>
+                    <div class="seat" data-seat="36"><span>36</span></div>
+                    <div class="seat" data-seat="37"><span>37</span></div>
+                    <div class="seat" data-seat="38"><span>38</span></div>
+                    <div class="seat" data-seat="39"><span>39</span></div>
+                    <div class="seat" data-seat="40"><span>40</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="41"><span>41</span></div>
+                    <div class="seat" data-seat="42"><span>42</span></div>
+                    <div class="seat" data-seat="43"><span>43</span></div>
+                    <div class="seat" data-seat="44"><span>44</span></div>
+                    <div class="seat" data-seat="45"><span>45</span></div>
+                    <div class="seat" data-seat="46"><span>46</span></div>
+                    <div class="seat" data-seat="47"><span>47</span></div>
+                    <div class="seat" data-seat="48"><span>48</span></div>
+                    <div class="seat" data-seat="49"><span>49</span></div>
+                    <div class="seat" data-seat="50"><span>50</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="51"><span>51</span></div>
+                    <div class="seat" data-seat="52"><span>52</span></div>
+                    <div class="seat" data-seat="53"><span>53</span></div>
+                    <div class="seat" data-seat="54"><span>54</span></div>
+                    <div class="seat" data-seat="55"><span>55</span></div>
+                    <div class="seat" data-seat="56"><span>56</span></div>
+                    <div class="seat" data-seat="57"><span>57</span></div>
+                    <div class="seat" data-seat="58"><span>58</span></div>
+                    <div class="seat" data-seat="59"><span>59</span></div>
+                    <div class="seat" data-seat="60"><span>60</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="61"><span>61</span></div>
+                    <div class="seat" data-seat="62"><span>62</span></div>
+                    <div class="seat" data-seat="63"><span>63</span></div>
+                    <div class="seat" data-seat="64"><span>64</span></div>
+                    <div class="seat" data-seat="65"><span>65</span></div>
+                    <div class="seat" data-seat="66"><span>66</span></div>
+                    <div class="seat" data-seat="67"><span>67</span></div>
+                    <div class="seat" data-seat="68"><span>68</span></div>
+                    <div class="seat" data-seat="69"><span>69</span></div>
+                    <div class="seat" data-seat="70"><span>70</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="71"><span>71</span></div>
+                    <div class="seat" data-seat="72"><span>72</span></div>
+                    <div class="seat" data-seat="73"><span>73</span></div>
+                    <div class="seat" data-seat="74"><span>74</span></div>
+                    <div class="seat" data-seat="75"><span>75</span></div>
+                    <div class="seat" data-seat="76"><span>76</span></div>
+                    <div class="seat" data-seat="77"><span>77</span></div>
+                    <div class="seat" data-seat="78"><span>78</span></div>
+                    <div class="seat" data-seat="79"><span>79</span></div>
+                    <div class="seat" data-seat="80"><span>80</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="81"><span>81</span></div>
+                    <div class="seat" data-seat="82"><span>82</span></div>
+                    <div class="seat" data-seat="83"><span>83</span></div>
+                    <div class="seat" data-seat="84"><span>84</span></div>
+                    <div class="seat" data-seat="85"><span>85</span></div>
+                    <div class="seat" data-seat="86"><span>86</span></div>
+                    <div class="seat" data-seat="87"><span>87</span></div>
+                    <div class="seat" data-seat="88"><span>88</span></div>
+                    <div class="seat" data-seat="89"><span>89</span></div>
+                    <div class="seat" data-seat="90"><span>90</span></div>
+                </div>
+                <div class="row">
+                    <div class="seat" data-seat="91"><span>91</span></div>
+                    <div class="seat" data-seat="92"><span>92</span></div>
+                    <div class="seat" data-seat="93"><span>93</span></div>
+                    <div class="seat" data-seat="94"><span>94</span></div>
+                    <div class="seat" data-seat="95"><span>95</span></div>
+                    <div class="seat" data-seat="96"><span>96</span></div>
+                    <div class="seat" data-seat="97"><span>97</span></div>
+                    <div class="seat" data-seat="98"><span>98</span></div>
+                    <div class="seat" data-seat="99"><span>99</span></div>
+                    <div class="seat" data-seat="100"><span>100</span></div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="booking-details">
+            <h3>Booking Details</h3>
+            <p><strong>Movie:</strong> <span id="movieName">JANA NAYAGAN-(2D-TAMIL)</span></p>
+            <p><strong>Theater:</strong> <span id="theaterName">Devi Cineplex, Anna Salai, Chennai</span></p>
+            <p><strong>Date:</strong> <span id="showDate">APR 17,5:14 PM</span></p>
+            <p><strong>Seats:</strong> <span id="selected-seats">None</span></p>
+            <p class="total-price"><strong>Total:</strong> ₹<span id="total-price">0.00</span></p>
+            <button class="proceed-btn">PROCEED TO PAYMENT</button>
+            
+            <!-- Show Snacks Button -->
+            <button id="snackToggle" onclick="toggleSnackMenu()" >SHOW SNACKS</button>
+
+           <a href="{{ url_for('officialpark') }}" style="text-decoration: none;">
+                <button id="parking">PARKING</button>
+            </a>
+
+            <!-- QR Code Container -->
+            <div class="qr-container" id="qr-container">
+                <h3>Booking Confirmed!</h3>
+                <div id="qrcode"></div>
+                <p>Scan the QR code to retrieve your booking.</p>
+            </div>
+        </div>
+    </div>
+
+   <!-- Floating Snack Menu -->
+<div class="snack-menu" id="snackMenu">
+    <h3>Snacks Menu</h3>
+
+    <div class="snack-item">
+        <img src="{{ url_for('static', filename='images/popcorn.jpg') }}" alt="Popcorn">
+        <span>Popcorn</span>
+        <button onclick="orderSnack('Popcorn', 50, 'Small')">Small - ₹50</button>
+        <button onclick="orderSnack('Popcorn', 100, 'Medium')">Medium - ₹100</button>
+        <button onclick="orderSnack('Popcorn', 150, 'Large')">Large - ₹150</button>
+    </div>
+
+    <div class="snack-item">
+        <img src="{{ url_for('static', filename='images/cola.jpg') }}" alt="Drink">
+        <span>Soft Drink</span>
+        <button onclick="orderSnack('Soft Drink', 30, 'Small')">Small - ₹30</button>
+        <button onclick="orderSnack('Soft Drink', 60, 'Medium')">Medium - ₹60</button>
+        <button onclick="orderSnack('Soft Drink', 90, 'Large')">Large - ₹90</button>
+    </div>
+
+    <div class="snack-item">
+        <img src="{{ url_for('static', filename='images/burger.jpg') }}" alt="Hamburger">
+        <span>Hamburger</span>
+        <button onclick="orderSnack('Hamburger', 120)"> - ₹120</button>
+    </div>
+
+    <div class="snack-item">
+        <img src="{{ url_for('static', filename='images/icecream.jpg') }}" alt="Ice Cream">
+        <span>Ice Cream</span>
+        <button onclick="orderSnack('Ice Cream', 50)"> - ₹50</button>
+    </div>
+</div>
+
+
+    <script>
+        let totalSnackPrice = 0; // Initialize snack price
+        let selectedSeats = [];
+        let seatPrice = 190.00;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const seats = document.querySelectorAll(".seat");
+            const selectedSeatsElement = document.getElementById("selected-seats");
+            const totalPriceElement = document.getElementById("total-price");
+            const snackMenu = document.getElementById('snackMenu');
+            const snackToggleButton = document.getElementById('snackToggle');
+
+            // Seat selection event
+            seats.forEach((seat) => {
+                seat.addEventListener("click", () => {
+                    seat.classList.toggle("selected"); // Toggle selection of a seat
+                    updateSelectedSeats(); // Update selected seats on each click
+                });
+            });
+
+            function updateSelectedSeats() {
+                const selectedSeatsList = document.querySelectorAll(".seat.selected");
+                selectedSeats = [...selectedSeatsList].map(seat => seat.dataset.seat); // Update to get data-seat
+    
+                selectedSeatsElement.innerText = selectedSeats.length > 0 ? selectedSeats.join(", ") : "None"; 
+                updateTotal();
+            }
+
+           function updateTotal() {
+                const ticketPrice = selectedSeats.length * seatPrice;
+                const parkprice = parseFloat(sessionStorage.getItem('parkprice')) || 0;
+                console.log("Retrieved Parking Price:", parkprice);
+                const total = ticketPrice + totalSnackPrice + parkprice; // Sum of ticket price and snack price
+                totalPriceElement.innerText = total.toFixed(2);
+                
+                if (selectedSeats.length > 0) {
+                    snackToggleButton.style.display = 'block'; // Show the toggle button after selecting seats
+                } else {
+                    snackToggleButton.style.display = 'none'; // Hide toggle button if no seats selected
+                    snackMenu.classList.remove('active'); // Also ensure the menu is hidden
+                }
+            }
+
+            document.querySelector(".proceed-btn").addEventListener("click", () => {
+                if (selectedSeats.length === 0) {
+                    alert("Please select at least one seat before proceeding.");
+                    return;
+                }
+                const ticketDetails = `Seats: ${selectedSeats.join(", ")}\nTotal: ₹${totalPriceElement.innerText}`;
+    
+                // Generate QR code with ticket details
+                $('#qrcode').empty(); // Clear any existing QR code
+                $('#qrcode').qrcode(ticketDetails);
+                document.getElementById('qr-container').style.display = 'flex'; // Show QR
+            });
+        });
+
+        function toggleSnackMenu() {
+            const snackMenu = document.getElementById('snackMenu');
+            const isVisible = snackMenu.classList.contains('active');
+
+            if (isVisible) {
+                snackMenu.classList.remove('active'); // Hide menu
+                snackMenu.style.animation = 'slideOut 0.5s forwards'; // Add slide out animation
+                setTimeout(() => {
+                    snackMenu.style.animation = ''; // Reset animation property
+                }, 500);
+            } else {
+                snackMenu.classList.add('active'); // Show menu
+                snackMenu.style.animation = 'slideIn 0.5s forwards'; // Add slide in animation
+            }
+        }
+
+        function orderSnack(snack, price, size) {
+            const quantity = prompt(`How many ${size} ${snack}(s) would you like to order?`);
+            if (quantity && !isNaN(quantity) && quantity > 0) {
+                const snackTotalPrice = price * quantity; // Calculate total snack price
+                totalSnackPrice += snackTotalPrice; // Update total snack price
+                alert(`You ordered ${quantity} ${size} ${snack}(s) for ₹${snackTotalPrice}`);
+                updateTotal(); // Update total price after ordering snacks
+                document.getElementById('snackMenu').classList.remove('active'); // Hide snack menu after snack is ordered
+            } else {
+                alert("Please enter a valid quantity.");
+            }
+        }  
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+       
+        .date {
+            padding: 10px 15px;
+            background: #ff0000;
+            border-radius: 10px;
+            width: 47px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .date:hover {
+            background: #a2a2a2;
+        }
+        .selected {
+            background: #dddddd;
+            color: rgb(255, 0, 0);
+            font-weight: bold;
+        }
+        
+        .header {
+            background: #1f1f1f;
+            padding: 20px;
+            font-size: 24px;
+            text-align: center;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+        }
+        .container {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 1200px;
+        }
+        .theater-list {
+            background: #1f1f1f;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.1);
+        }
+        .theater {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-bottom: 1px solid #444;
+        }
+        .showtimes {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .showtimes button {
+            background: #ff0000;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: white;
+            font-weight: 600;
+        }
+        .showtimes button:hover {
+            background: #cc0000;
+        }
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            background: #1f1f1f;
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0px -2px 10px rgba(255, 255, 255, 0.1);
+        }
+
+         .menu-container {
+            flex: 3;
+            /* Adjusted flex value */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Center menu items */
+        }
+
+        .menu-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-list-item {
+            margin: 0 20px; /* Adjusted spacing */
+            animation: fadeIn 0.6s ease;
+        }
+
+        .menu-list-item button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 17px; /* Slightly bigger */
+            cursor: pointer;
+            padding: 12px 20px; /* Added padding */
+            border-radius: 8px; /* Rounded corners */
+            transition: color 0.3s ease, background-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .menu-list-item button:hover {
+            color: #ff2b2b;
+            background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover */
+        }
+
+        .menu-list-item.active button {
+            font-weight: bold;
+            text-decoration: underline;
+            /* color: #4dbf00; */ /* Keep active color same as hover for consistency */
+            animation: glowing 2s ease infinite;
+        }
+
+
+        
+    </style>
+</head>
+<body>
+    <center>
+        <div class="menu-container">
+                    <ul class="menu-list">
+    <li class="menu-list-item active">
+        <button onclick="location.href='{{ url_for('index') }}'">Home</button>
+    </li>
+</ul>
+
+    </center>
+    <div class="container">
+        <center>
+            <div class="screen">THUG LIFE-(TAMIL-2D)</div>
+            <div class="date-picker-container" id="datePicker">
+                <h2 style="text-align:left;"> <div class="date selected">apr 16</div> </h2>
+            </div>
+        </center>
+        <div class="theater-list">
+            <div class="theater">
+                <div>
+                <h2 style="text-align: left;">EGA Cinemas (RGB LASER | Dolby Audio | Couple Sofa), Kilpauk, Chennai</h2>
+                </div>
+                <p style="text-align: left;">Facilities: Parking, Food & Beverages</p>
+                <div class="showtimes">
+                    <a href="{{ url_for('thug2') }}">
+                        <button onclick="bookSeat('09:00 AM')">09:00 AM</button>
+                    </a>
+                    <a href="{{ url_for('thug3') }}">
+                        <button onclick="bookSeat('04:05 PM')">04:05 PM</button>
+                    </a>
+                </div>
+            </div>
+            <div class="theater">
+                <h2 style="text-align: left;">Casino Cinemas 4K RGB Laser 3D A/C Dolby 7.1.2, Mount Road, Chennai</h2>
+                <p style="text-align: left;">Facilities: Parking, Metro Nearby</p>
+                <div class="showtimes">
+                    <a href="{{ url_for('thug4') }}">
+                        <button onclick="bookSeat('11:45 AM')">11:45 AM</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2025 Movie Booking. All rights reserved.
+    </footer>
+    <script>
+        const dates = document.querySelectorAll('.date');
+        dates.forEach(date => {
+            date.addEventListener('click', function () {
+                document.querySelector('.selected').classList.remove('selected');
+                this.classList.add('selected');
+            });
+        });
+        function bookSeat(time) {
+            alert('You selected ' + time + ' show. Proceed to seat selection.');
+        }
+    </script>
+</body>
+</html>

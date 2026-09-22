@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ticket Booking - Enchanted Cinema</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <style>
+        body {
+            font-family: "Roboto", sans-serif;
+            background-color: #151515;
+            color: white;
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+        }
+
+        h1 {
+            color: #ff2b2b; /* Brand color */
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .step-section, .booking-details {
+            flex: 1;
+            margin-left: 20px;
+        }
+
+        .step-section {
+            text-align: center;
+        }
+
+        .screen {
+            margin: 20px auto;
+            padding: 5px;
+            border-top: 3px solid #ff2b2b; /* Brand color */
+            width: 70%;
+            font-weight: bold;
+            font-size: 18px;
+            background-color: #222; /* Background for screen */
+        }
+
+        .seat-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .seat {
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            background-color: #444; /* Neutral background for seats */
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .seat.selected {
+            background-color: rgba(255, 43, 43, 0.7); /* Translucent red for selected seats */
+        }
+
+        .booking-details {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.8);
+            display: inline-block;
+            text-align: left;
+            flex-shrink: 0; /* Prevents it from squeezing */
+            max-width: 300px; /* Keeps it within limits */
+        }
+
+        .proceed-btn {
+            background: linear-gradient(to right, #ff7e00, #ffbf00);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+            border-radius: 5px;
+            display: block;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            width: 100%;
+        }
+
+        .proceed-btn:hover {
+            background: linear-gradient(to right, #ff6600, #ffaa00);
+        }
+
+        .snack-menu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            display: none; /* Hidden by default */
+        }
+
+        .snack-menu.active {
+            display: block; /* Show when active */
+        }
+
+        .snack-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .snack-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .snack-item button {
+            margin-left: 10px;
+            background: none;
+            color: #ff7e00;
+            border: 1px solid #ff7e00;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .snack-item button:hover {
+            background: #ff7e00;
+            color: white;
+        }
+
+        .total-price {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        /* QR Code Style */
+        .qr-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        #qrcode {
+            margin-top: 15px;
+        }
+
+        #snackToggle {
+            margin: 10px;
+            background: #ff7e00;
+            border: none;
+            padding: 10px 15px;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Hidden until snacks are selected */
+        }
+
+        #snackToggle:hover {
+            background: #ff6600; /* Darken the color on hover */
+        }
+
+        /* Movie poster styles */
+        .movie-poster {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .movie-poster img {
+            max-width: 200px; /* Set max width for posters */
+        }
+
+        /* Theatre selection styles */
+        .theater-selection {
+            display: none;
+            text-align: center;
+        }
+
+        .theater-btn {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #ff7e00;
+            border: none;
+            cursor: pointer;
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="step-section">
+            <h1>Movie Ticket Booking - Enchanted Cinema</h1>
+            <div class="screen">SCREEN THIS WAY</div>
+
+            <div class="seat-layout">
+                <!-- Updated Seat Rows - 40 Seats in 5 Rows of 8 -->
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+            </div>
+
+            <div class="movie-poster" id="moviePoster">
+                <h3 id="selectedMovieTitle">Selected Movie:</h3>
+                <img id="movieImage" src="" alt="Movie Poster" style="display: none;">
+            </div>
+
+            <div class="theater-selection" id="theaterSelection">
+                <h3>Select a Theater</h3>
+                <button class="theater-btn" onclick="selectTheater('Cinépolis BSR Mall, Chennai')">Cinépolis BSR Mall, Chennai</button>
+                <button class="theater-btn" onclick="selectTheater('PVR Cinemas, Chennai')">PVR Cinemas, Chennai</button>
+                <button class="theater-btn" onclick="selectTheater('Satyam Cinemas, Chennai')">Satyam Cinemas, Chennai</button>
+            </div>
+        </div>
+
+        <div class="booking-details">
+            <h3>Booking Details</h3>
+            <p><strong>Movie:</strong> <span id="movieName">None</span></p>
+            <p><strong>Theater:</strong> <span id="theaterName">None</span></p>
+            <p><strong>Date:</strong> <span id="showDate">04 March, 4:05 PM</span></p>
+            <p><strong>Seats:</strong> <span id="selected-seats">None</span></p>
+            <p class="total-price"><strong>Total:</strong> ₹<span id="total-price">0.00</span></p>
+            <button class="proceed-btn" onclick="proceedToPayment()">PROCEED TO PAYMENT</button>
+        </div>
+    </div>
+
+    <!-- Floating Snack Menu -->
+    <div class="snack-menu" id="snackMenu">
+        <h3>Snacks Menu</h3>
+        <div class="snack-item">
+            <img src="popcorn.jpg" alt="Popcorn">
+            <span>Popcorn</span>
+            <button onclick="orderSnack('Popcorn', 50, 'Small')">Small - ₹50</button>
+            <button onclick="orderSnack('Popcorn', 100, 'Medium')">Medium - ₹100</button>
+            <button onclick="orderSnack('Popcorn', 150, 'Large')">Large - ₹150</button>
+        </div>
+        <div class="snack-item">
+            <img src="cola.jpg" alt="Drink">
+            <span>Soft Drink</span>
+            <button onclick="orderSnack('Soft Drink', 30, 'Small')">Small - ₹30</button>
+            <button onclick="orderSnack('Soft Drink', 60, 'Medium')">Medium - ₹60</button>
+            <button onclick="orderSnack('Soft Drink', 90, 'Large')">Large - ₹90</button>
+        </div>
+    </div>
+
+    <button id="snackToggle" onclick="toggleSnackMenu()">Show Snacks</button>
+
+    <div class="qr-container" id="qr-container">
+        <h3>Booking Confirmed!</h3>
+        <div id="qrcode"></div>
+        <p>Scan the QR code to retrieve your booking.</p>
+    </div>
+
+    <script>
+        let totalSnackPrice = 0; // Initialize snack price
+        let selectedSeats = [];
+        let seatPrice = 139.62;
+        let selectedMovie = "JANA NAYAGAN (Tamil)"; // Example selected movie
+        let movieImageURL = ""; // Placeholder for movie image
+
+        // Sample mapping for movie images; replace with actual images
+        const movieImages = {
+            "JANA NAYAGAN (Tamil)": "path/to/jana-nayagan-poster.jpg" // Update with actual image path
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const seats = document.querySelectorAll(".seat");
+            const selectedSeatsElement = document.getElementById("selected-seats");
+            const totalPriceElement = document.getElementById("total-price");
+            const theaterSelectionDiv = document.getElementById("theaterSelection");
+            const movieSpan = document.getElementById("movieName");
+            const theaterSpan = document.getElementById("theaterName");
+            const movieImage = document.getElementById("movieImage"); // Movie Image Element
+            const movieTitle = document.getElementById("selectedMovieTitle"); // Movie Title Element
+
+            // Set Movie Name and Image
+            movieSpan.innerText = selectedMovie; // Set the movie name
+            movieImageURL = movieImages[selectedMovie] || ""; // Get movie image if exists
+            movieImage.src = movieImageURL; // Set the movie image source
+            movieImage.style.display = movieImageURL ? "block" : "none"; // Show if image exists
+            movieTitle.style.display = "block";
+
+            // Show theater selection after selecting a movie
+            theaterSelectionDiv.style.display = "block"; // Show theater selection
+
+            // Seat selection event
+            seats.forEach((seat, index) => {
+                seat.addEventListener("click", () => {
+                    if (theaterSpan.innerText === "None") {
+                        alert("Please select a theater before selecting seats.");
+                        return;
+                    }
+                    seat.classList.toggle("selected"); // Toggle selection of a seat
+                    updateSelectedSeats();
+                });
+            });
+
+            function updateSelectedSeats() {
+                const selectedSeatsList = document.querySelectorAll(".seat.selected");
+                selectedSeats = [...selectedSeatsList].map((_, i) => `C-${i + 1}`);
+                selectedSeatsElement.innerText = selectedSeats.length > 0 ? selectedSeats.join(", ") : "None";
+                updateTotal();
+            }
+
+            function updateTotal() {
+                const ticketPrice = selectedSeats.length * seatPrice;
+                const total = ticketPrice + totalSnackPrice;
+                totalPriceElement.innerText = total.toFixed(2);
+            }
+        });
+
+        function selectTheater(theaterName) {
+            const theaterSpan = document.getElementById("theaterName");
+            theaterSpan.innerText = theaterName; // Set the theater name
+            document.getElementById("theaterSelection").style.display = "none"; // Hide theater selection
+        }
+
+        function proceedToPayment() {
+            const selectedSeatsElement = document.getElementById("selected-seats");
+            if (selectedSeats.length === 0) {
+                alert("Please select at least one seat before proceeding.");
+                return;
+            }
+            const ticketDetails = `Movie: ${selectedMovie}\nTheater: ${document.getElementById("theaterName").innerText}\nSeats: ${selectedSeats.join(", ")}\nTotal: ₹${document.getElementById("total-price").innerText}`;
+            // Generate QR code with ticket details
+            $('#qrcode').empty(); // Clear any existing QR code
+            $('#qrcode').qrcode(ticketDetails);
+            document.getElementById('qr-container').style.display = 'flex'; // Show QR
+        }
+
+        function toggleSnackMenu() {
+            const snackMenu = document.getElementById('snackMenu');
+            const isVisible = snackMenu.classList.contains('active');
+
+            if (isVisible) {
+                snackMenu.classList.remove('active'); // Hide menu
+            } else {
+                snackMenu.classList.add('active'); // Show menu
+            }
+        }
+
+        function orderSnack(snack, price, size) {
+            const quantity = prompt(`How many ${size} ${snack}(s) would you like to order?`);
+            if (quantity && !isNaN(quantity) && quantity > 0) {
+                const snackTotalPrice = price * quantity; // Calculate total snack price
+                totalSnackPrice += snackTotalPrice; // Update total snack price
+                alert(`You ordered ${quantity} ${size} ${snack}(s) for ₹${snackTotalPrice}`);
+                updateTotal();
+                document.getElementById('snackMenu').classList.remove('active'); // Hide snack menu after snack is ordered
+                document.getElementById('snackToggle').style.display = 'block'; // Show toggle button
+            } else {
+                alert("Please enter a valid quantity.");
+            }
+        }
+    </script>
+
+</body>
+</html>

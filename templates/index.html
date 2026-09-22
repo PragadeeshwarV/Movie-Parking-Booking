@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enchanted Cinema</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Sen:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset (Optional but recommended) */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Roboto", sans-serif;
+            background-color: #151515;
+            color: white;
+            overflow-x: hidden;
+            /* Prevent horizontal scroll */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* for dark mode transition */
+        }
+
+        /* Keyframes for Magical Animations */
+        @keyframes glowing {
+            0% {
+                box-shadow: 0 0 5px rgba(255, 0, 0, 0.3); /* subtle glow */
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
+            }
+            100% {
+                box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+            }
+        }
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            width: 100%;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.8); /* Slightly transparent */
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            /* Ensure navbar stays on top */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* for dark mode transition */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* subtle shadow */
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px; /* Increased padding */
+            height: 100%;
+            color: white;
+            font-family: "Sen", sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* for dark mode transition */
+        }
+
+        .logo-container {
+            flex: 1;
+            animation: slideInFromLeft 0.8s ease;
+        }
+
+        .logo {
+            font-size: 28px; /* Slightly bigger */
+            color: #ff0000;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow */
+            transition: color 0.3s ease;
+        }
+        /* .logo:hover {
+             color: #8bc34a;
+        } */
+
+        .menu-container {
+            flex: 3;
+            /* Adjusted flex value */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Center menu items */
+        }
+
+        .menu-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-list-item {
+            margin: 0 20px; /* Adjusted spacing */
+            animation: fadeIn 0.6s ease;
+        }
+
+        .menu-list-item button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 17px; /* Slightly bigger */
+            cursor: pointer;
+            padding: 12px 20px; /* Added padding */
+            border-radius: 8px; /* Rounded corners */
+            transition: color 0.3s ease, background-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .menu-list-item button:hover {
+            color: #ff2b2b;
+            background-color: rgba(255, 255, 255, 0.1); /* Subtle background on hover */
+        }
+
+        .menu-list-item.active button {
+            font-weight: bold;
+            text-decoration: underline;
+            /* color: #4dbf00; */ /* Keep active color same as hover for consistency */
+            animation: glowing 2s ease infinite;
+        }
+
+        .header-button {
+            background-color: #bf0000;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            /* Added padding */
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 17px;
+            /* Slightly bigger */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-family: inherit;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .header-button:hover {
+            background-color: #ff0000;
+            transform: scale(1.05); /* Slight scale on hover */
+        }
+
+        .theater-container {
+            position: absolute;
+            top: 60px;
+            /* Position under the navbar */
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            /* Darker background */
+            padding: 25px; /* Increased padding */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+            display: none;
+            /* Hidden by default */
+            z-index: 1000;
+            text-align: center;
+            /* Center content */
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            /* for dark mode transition */
+            border-radius: 12px; /* Rounded corners */
+            animation: fadeIn 0.6s ease;
+        }
+
+        .theater-container h2 {
+            margin-bottom: 20px;
+            /* Increased spacing */
+            font-size: 1.7rem; /* Slightly bigger */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadow */
+        }
+
+        .theater-button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            /* Increased padding */
+            margin: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 17px;
+            /* Increased font size */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: auto;
+            /* Allow button width to adjust */
+            font-family: inherit;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .theater-button:hover {
+            background-color: #555;
+            transform: scale(1.05); /* Slight scale on hover */
+        }
+
+        /* Profile Styles */
+        .profile-container {
+            flex: 1;
+            /* Adjusted flex value */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .profile-text-container {
+            margin-right: 12px; /* Increased spacing */
+            font-size: 16px; /* Slightly bigger */
+        }
+
+        .profile-picture {
+            width: 40px;
+            /* Slightly bigger */
+            height: 40px;
+            /* Slightly bigger */
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ff0000; /* Green border */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Subtle shadow */
+            transition: border-color 0.3s ease;
+        }
+
+        .profile-picture:hover {
+            border-color: #ff0000; /* Lighter green on hover */
+        }
+
+        /* Toggle Styles */
+        .toggle {
+            width: 45px;
+            /* Slightly bigger */
+            height: 22px;
+            /* Slightly bigger */
+            background-color: rgba(255, 255, 255, 0.2); /* Subtle background */
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .toggle-icon {
+            color: goldenrod;
+            transition: color 0.3s ease;
+            font-size: 14px; /* Slightly smaller */
+        }
+
+        .toggle-ball {
+            width: 20px;
+            /* Slightly bigger */
+            height: 20px;
+            /* Slightly bigger */
+            background-color: black;
+            position: absolute;
+            right: 2px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+        }
+
+        /* Container Styles */
+        .container {
+            background-color: #151515;
+            min-height: calc(100vh - 60px);
+            /* Adjusted for navbar height */
+            color: white;
+            padding: 30px;
+            /* Add padding for spacing */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* for dark mode transition */
+            animation: fadeIn 0.8s ease;
+        }
+
+        .content-container {
+            padding: 0; /* Remove padding to align with container */
+        }
+
+        /* Featured Content Styles */
+        .featured-content {
+            height: 65vh;
+            padding: 60px;
+            /* Increased padding */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative; /* For the overlay */
+            overflow: hidden; /* Hide overflow */
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7); /* Stronger shadow */
+        }
+
+        .featured-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.8) 100%); /* Gradient overlay */
+            pointer-events: none; /* Make sure the overlay doesn't block clicks */
+            z-index: 1; /* Ensure the overlay is above the content */
+            border-radius: inherit; /* Match rounded corners */
+        }
+        .featured-title {
+            width: 400px;
+            /* Adjusted width */
+            margin-bottom: 25px;
+            /* Add spacing below the title */
+            font-size: 2.5rem; /* Increased font size */
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            /* Added shadow */
+            position: relative;
+            z-index: 2; /* Bring title to front */
+            animation: fadeIn 1s ease;
+        }
+
+        .featured-desc {
+            width: 80%;
+            /* Adjusted width */
+            color: lightgray;
+            margin-bottom: 35px;
+            /* Add spacing */
+            font-size: 1.1rem;
+            /* Reduce font size for better fit */
+            line-height: 1.5;
+            /* Improve readability */
+            position: relative;
+            z-index: 2; /* Bring description to front */
+            animation: fadeIn 1s ease;
+        }
+
+        .featured-button {
+            background-color: #ff2b2b;
+            color: white;
+            padding: 14px 30px;
+            /* Adjusted padding */
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.2rem;
+            /* Increased font size */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-family: inheri0t;
+            position: relative;
+            z-index: 2; /* Bring button to front */
+            animation: fadeIn 1s ease;
+        }
+
+        .featured-button:hover {
+            background-color: #ff4a4a;
+            transform: scale(1.05);
+        }
+
+        /* Movie List Container Styles */
+        .movie-list-container {
+            padding: 0 30px;
+            /* Increased padding */
+            margin-bottom: 40px;
+            /* Add spacing between movie lists */
+            animation: fadeIn 0.8s ease;
+        }
+
+        .movie-list-title {
+            font-size: 2rem;
+            /* Increased title size */
+            margin-bottom: 25px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            /* Text shadow */
+        }
+
+        .movie-list-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .movie-list {
+            display: flex;
+            align-items: center;
+            padding: 25px 0;
+            /* Increased padding */
+            transform: translateX(0);
+            transition: transform 0.5s ease;
+            /* Adjust for responsiveness */
+            gap: 25px; /* Increased gap */
+        }
+
+        .movie-list-item {
+            margin-right: 25px;
+            /* Adjusted spacing */
+            position: relative;
+            flex: 0 0 200px;
+            /* Increased width */
+            transition: transform 0.3s ease;
+            border-radius: 12px; /* Rounded corners */
+            overflow: hidden; /* Ensure rounded corners */
+            animation: fadeIn 0.8s ease;
+        }
+
+        .movie-list-item:hover {
+            transform: scale(1.03);
+        }
+        .movie-list-item:hover .movie-list-item-img {
+            transform: scale(1.1);
+            opacity: 0.7;
+        }
+
+        .movie-list-item-img {
+            width: 100%;
+            height: 300px; /* Increased height */
+            object-fit: cover;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: block; /* Remove any potential bottom spacing */
+        }
+
+        .movie-list-item-title {
+            background: rgba(255, 255, 255, 0.7);
+            color: black;
+            padding: 10px 15px;
+            /* Increased padding */
+            border-radius: 8px;
+            font-size: 1.1rem;
+            /* Slightly bigger */
+            font-weight: bold;
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: calc(100% - 24px); /* Account for padding */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle text shadow */
+        }
+
+        .movie-list-item-desc {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 12px;
+            /* Increased padding */
+            font-size: 1.0rem;
+            /* Slightly bigger */
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            width: calc(100% - 24px); /* Account for padding */
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 8px;
+            transform: translateY(-50%);
+            text-align: center;
+            line-height: 1.4;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadow */
+        }
+
+        .movie-list-item:hover .movie-list-item-desc {
+            opacity: 1;
+        }
+
+        .movie-list-item-button {
+            padding: 12px 18px;
+            /* Adjusted padding */
+            background-color: #ff0000;
+            color: white;
+            border-radius: 8px;
+            outline: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            bottom: 12px;
+            /* Increased spacing */
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 1;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            font-weight: bold;
+            font-size: 1.1rem;
+            /* Slightly bigger */
+            font-family: inherit;
+        }
+
+        .movie-list-item-button:hover {
+            background-color: #ff3b3b;
+            transform: scale(1.05);
+        }
+
+        .arrow {
+            font-size: 70px;
+            /* Adjusted arrow size */
+            position: absolute;
+            top: 50%;
+            right: 0;
+            color: lightgray;
+            opacity: 0.6; /* Slightly less opaque */
+            cursor: pointer;
+            transform: translateY(-50%);
+            transition: opacity 0.3s ease, color 0.3s ease;
+            padding: 12px;
+            /* Add padding to the arrow */
+            z-index: 2;
+            /* Ensure arrows are above movie items */
+        }
+
+        .arrow:hover {
+            opacity: 0.9;
+            color: white; /* Change color on hover */
+        }
+        /* Dark Mode adjustments */
+        body.active {
+            background-color: #111; /* Darker background */
+            color: #eee;
+        }
+
+        .navbar.active {
+            background-color: #222;
+            color: #eee;
+        }
+
+        .theater-container.active {
+            background-color: #333;
+        }
+        .toggle.active {
+            background-color: #444; /* Darker toggle */
+        }
+
+        .toggle-icon.active {
+            color: #ffc107; /* Golden yellow */
+        }
+
+        .toggle-ball.active {
+            background-color: #ddd;
+            /* Light ball */
+            transform: translateX(22px);
+        }
+
+        .logo.active {
+            color: #f0ad4e; /* Different color for dark mode */
+        }
+        /* Keyframe animation for the glow effect in dark mode */
+         .movie-list-item-button:hover, .menu-list-item button:hover, .header-button:hover, .theater-button:hover{
+             animation: glowing 1s ease infinite;
+         }
+        /* Responsive Design - Adjust as needed */
+        @media (max-width: 992px) { /* Medium devices (tablets) */
+            .container {
+                padding: 20px;
+            }
+            .navbar-container {
+                padding: 0 20px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+            .menu-list-item {
+                margin: 0 12px;
+            }
+            .header-button {
+                padding: 10px 18px;
+                font-size: 15px;
+            }
+            .featured-content {
+                padding: 40px;
+                height: auto;
+            }
+
+            .featured-title {
+                font-size: 2rem;
+            }
+            .featured-desc {
+                font-size: 1rem;
+            }
+            .featured-button {
+                font-size: 1.1rem;
+            }
+            .movie-list-container {
+                padding: 0 20px;
+                margin-bottom: 30px;
+            }
+            .movie-list-title {
+                font-size: 1.7rem;
+            }
+             .movie-list-item {
+                flex: 0 0 180px;
+            }
+            .movie-list-item-img {
+                height: 270px;
+            }
+
+            .arrow {
+                font-size: 55px;
+            }
+            .theater-container {
+                padding: 15px;
+            }
+            .theater-container h2 {
+                font-size: 1.4rem;
+            }
+            .theater-button {
+                padding: 10px 16px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            /* Small devices (phones) */
+            .container {
+                padding: 15px;
+            }
+            .navbar-container {
+                padding: 0 15px;
+                flex-direction: column; /* Stack items vertically */
+                align-items: flex-start;
+            }
+            .logo-container {
+                margin-bottom: 10px;
+            }
+            .profile-container {
+                justify-content: flex-end; /* Align to right */
+                margin-top: 10px;
+            }
+            .menu-container {
+                justify-content: space-between;
+            }
+            .menu-list {
+                display: none;
+            }
+            .header-button {
+                display: none;
+            }
+            .featured-content {
+                padding: 25px;
+                text-align: center;
+            }
+            .featured-title {
+                font-size: 1.8rem;
+                width: 100%;
+            }
+            .featured-desc {
+                width: 100%;
+                font-size: 1rem;
+            }
+            .featured-button {
+                font-size: 1rem;
+            }
+            .movie-list-container {
+                padding: 0 15px;
+                margin-bottom: 25px;
+            }
+            .movie-list-title {
+                font-size: 1.5rem;
+            }
+            .movie-list-item {
+                flex: 0 0 45%;
+                margin-right: 10px; /* Reduce space between items */
+            }
+            .movie-list-item-img {
+                height: 250px;
+            }
+             .arrow {
+                font-size: 45px;
+             }
+             .theater-container {
+                padding: 10px;
+             }
+             .theater-button {
+                font-size: 14px;
+                padding: 8px 14px;
+             }
+            .theater-container h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Extra small devices (smaller phones) */
+            .movie-list-item {
+                flex: 0 0 90%; /* Take up most of the width */
+                margin-right: 0; /* Remove right margin */
+                margin-bottom: 15px;
+            }
+        }
+        @keyframes floatText {
+            0%, 100% {
+                transform: translateY(0);
+                text-shadow: 0 0 10px #6d1010, 0 0 20px #6d1010, 0 0 30px #6d1010, 0 0 40px #6d1010;
+            }
+            50% {
+                transform: translateY(-10px);
+                text-shadow: 0 0 15px #726a6a68, 0 0 25px #726a6a68, 0 0 35px #726a6a68, 0 0 45px #726a6a68
+            }
+        }
+        
+        h1 {
+            color: #ff0000;
+            font-size: 50px;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            font-family: 'Arial', sans-serif;
+            animation: floatText 3s ease-in-out infinite alternate;
+        }
+        \.login-button {
+            background-color: #ff5733;
+            color: white;
+            border: none;
+            padding: 25px 40px;
+            font-size: 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+    
+        .login-button:hover {
+            background-color: #e64a19;
+        }
+        
+        
+    </style>
+</head>
+
+<body>
+    <center>
+    <br>
+    <h1 style="color: #ff0000;">MOVIE FLEX</h1>
+</center>
+<main class="container">
+    <!-- Navigation Bar with Login Button -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <h1 class="logo">Movie Booking</h1>
+            <button class="login-button" onclick="window.location.href='{{ url_for('login') }}'">Login</button>
+        </div>
+    </nav>
+
+    <section class="content-container">
+        <!-- Movie Lists -->
+        <section class="movie-list-container">
+            <h2 class="movie-list-title">NEW RELEASES</h2>
+            <div class="movie-list-wrapper">
+                <div class="movie-list">
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/coolie.jpg') }}" alt="COOLIE">
+                        <span class="movie-list-item-title">COOLIE</span>
+                        <a href="{{ url_for('coolie1') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/thuglife.jpg') }}" alt="THUG LIFE">
+                        <span class="movie-list-item-title">THUGLIFE</span>
+                        <a href="{{ url_for('thug1') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/jana.jpg') }}" alt="JANA NAYAGAN">
+                        <span class="movie-list-item-title">JANA NAYAGAN</span>
+                        <a href="{{ url_for('jana1') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/goodbadugly.jpg') }}" alt="GOOD BAD UGLY">
+                        <span class="movie-list-item-title">GOOD BAD UGLY</span>
+                        <a href="{{ url_for('GBU1') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/retro.jpg') }}" alt="RETRO">
+                        <span class="movie-list-item-title">RETRO</span>
+                        <a href="{{ url_for('Retro1') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/idlykadai.jpg') }}" alt="IDLY KADAI">
+                        <span class="movie-list-item-title">IDLY KADAI</span>
+                        <a href="{{ url_for('IDLY1') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+        </section>
+
+        <!-- More Movie Lists (Upcoming Movies) -->
+        <section class="movie-list-container">
+            <h2 class="movie-list-title">UPCOMING MOVIES</h2>
+            <div class="movie-list-wrapper">
+                <div class="movie-list">
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/parashakthiheroda.jpg') }}" alt="PARASHAKTHI">
+                        <span class="movie-list-item-title">PARASHAKTHI</span>
+                        <a href="{{ url_for('free') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/angrybirds3.jpg') }}" alt="ANGRY BIRDS 3">
+                        <span class="movie-list-item-title">ANGRY BIRDS 3</span>
+                        <a href="{{ url_for('free') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="AVATAR">
+                        <span class="movie-list-item-title">AVATAR</span>
+                        <a href="{{ url_for('free') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/superman.jpg') }}" alt="SUPERMAN">
+                        <span class="movie-list-item-title">SUPERMAN</span>
+                        <a href="{{ url_for('free') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/toxic.jpg') }}" alt="TOXIC">
+                        <span class="movie-list-item-title">TOXIC</span>
+                        <a href="{{ url_for('free') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                    <div class="movie-list-item">
+                        <img class="movie-list-item-img" src="{{ url_for('static', filename='images/avengers.jpg') }}" alt="AVENGERS">
+                        <span class="movie-list-item-title">AVENGERS</span>
+                        <a href="{{ url_for('free') }}">
+                            <button class="movie-list-item-button">Book</button>
+                        </a>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right arrow"></i>
+            </div>
+        </section>
+    </section>
+</main>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // ✅ Navigate Between Pages
+        function navigate(page) {
+            const pages = {
+                'home': 'index.html',
+                'movies': 'movies.html',
+            };
+            if (pages[page]) {
+                window.location.href = pages[page];
+            }
+        }
+
+        // ✅ Theater Selection & Storage
+        function selectTheater(theaterName) {
+            localStorage.setItem('selectedTheater', theaterName);
+            alert("Selected theater: " + theaterName);
+            hideTheaterContainer();
+        }
+
+        function showTheaterContainer() {
+            document.getElementById('theater-container').style.display = 'block';
+        }
+
+        function hideTheaterContainer() {
+            document.getElementById('theater-container').style.display = 'none';
+        }
+
+        // ✅ Dark Mode Toggle (Persistent)
+        const ball = document.querySelector(".toggle-ball");
+        const items = document.querySelectorAll(
+            ".container, .movie-list-title, .navbar, .sidebar, .left-menu-icon, .toggle, .menu-list-item button, .theater-button, .header-button, .navbar-container, .profile-text"
+        );
+
+        function applyDarkMode() {
+            items.forEach(item => item.classList.add("active"));
+            ball.classList.add("active");
+            document.body.classList.add("active");
+            localStorage.setItem('darkMode', 'true');  // Store dark mode preference
+        }
+
+        function removeDarkMode() {
+            items.forEach(item => item.classList.remove("active"));
+            ball.classList.remove("active");
+            document.body.classList.remove("active");
+            localStorage.setItem('darkMode', 'false'); // Remove dark mode preference
+        }
+
+        if (localStorage.getItem('darkMode') === 'true') {
+            applyDarkMode();
+        }
+
+        if (ball) {
+            ball.addEventListener("click", () => {
+                if (ball.classList.contains("active")) {
+                    removeDarkMode();
+                } else {
+                    applyDarkMode();
+                }
+            });
+        }
+
+        // ✅ Movie List Scrolling
+        const arrows = document.querySelectorAll(".arrow");
+        const movieLists = document.querySelectorAll(".movie-list");
+        const itemWidth = 225; // Width of movie item (200) + gap (25)
+
+        arrows.forEach((arrow, i) => {
+            const movieList = movieLists[i];
+            const itemNumber = movieList.querySelectorAll(".movie-list-item").length;
+            let clickCounter = 0;
+            let maxTranslate = (itemNumber - 4) * itemWidth;
+
+            arrow.addEventListener("click", () => {
+                if (clickCounter < itemNumber - 4) {
+                    clickCounter++;
+                    movieList.style.transform = `translateX(${-(clickCounter * itemWidth)}px)`;
+                } else {
+                    movieList.style.transform = "translateX(0)";
+                    clickCounter = 0;
+                }
+            });
+        });
+
+        // ✅ Check If User is Logged In (Persistent Across Pages)
+        function isLoggedIn() {
+            return sessionStorage.getItem('loggedIn') === 'true'; // Using sessionStorage to persist login
+        }
+
+        function checkLoginStatus() {
+            fetch('/session_test')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.logged_in) {
+                        sessionStorage.setItem('loggedIn', 'true'); // Store login session
+                        document.getElementById("logoutBtn").style.display = "block"; // Show logout button
+                        document.getElementById("loginBtn").style.display = "none"; // Hide login button
+                    } else {
+                        sessionStorage.removeItem('loggedIn');
+                    }
+                });
+        }
+
+        checkLoginStatus(); // ✅ Check login status on page load
+
+        // ✅ Logout Function
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            fetch('/logout')
+                .then(() => {
+                    sessionStorage.removeItem('loggedIn'); // Clear session on logout
+                    window.location.href = "/login"; // Redirect to login page
+                });
+        });
+
+        // ✅ Booking function with login check
+        function handleBooking(event, movieUrl) {
+            event.preventDefault(); // Stop the default button action
+
+            if (!isLoggedIn()) {
+                alert("Please log in first to book tickets!");
+                window.location.href = "/login";
+            } else {
+                window.location.href = movieUrl; // Proceed to booking
+            }
+        }
+
+        // ✅ Attach booking function to all buttons dynamically
+        document.querySelectorAll(".movie-list-item-button").forEach(button => {
+            button.addEventListener("click", function(event) {
+                const movieUrl = this.getAttribute("data-url"); // Get movie URL from button attribute
+                handleBooking(event, movieUrl);
+            });
+        });
+
+    });
+</script>
+
+
+</body>
+</html>

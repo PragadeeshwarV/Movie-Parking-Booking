@@ -1,0 +1,50 @@
+C:\Users\admin>mysql -u root -p
+Enter password: Vijay@2004
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 83
+Server version: 8.0.41 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| movie_booking      |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> use movie_booking;
+Database changed
+mysql> show tables;
++-------------------------+
+| Tables_in_movie_booking |
++-------------------------+
+| users                   |
++-------------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from users;
++----+--------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| id | name         | email             | password                                                                                                                                                           |
++----+--------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|  1 | Shubham Pati | shubham@gmail.com | scrypt:32768:8:1$zE71xGcYXij057e3$8cbed484a6c50a647c87b28fdb35ff19a33fe56b7b6f61ede7b91abdaf5fb8b16d0e67d2f3337271d6a292e775d5a640e38425b94226760a462f4f7df43afc5b |
+|  2 | vansh        | vansh@gmail.com   | scrypt:32768:8:1$X3v2tnvEaB38LNv7$f88d6fc19ca26676c25aa704b172d5c80caec189425c2144a4b717e1682bcc58da5f3ad3942c894b9890a96c59e6a3c3e2f01d86c78ec2cf40a374e98c28a21d |
+|  3 | vijay        | vijay@gmail.com   | scrypt:32768:8:1$94Z9RTq5zdtBp8n8$a126f2715a65452351019aaed50a85e458adb1266c64f452be383b4d5ae86429d88c053b45bfcf36f37f0b00d16a858a1f90ddc9a5b8f4c16fa055faada4ea72 |
+|  4 | virat        | virat@gmail.com   | scrypt:32768:8:1$syuoYVFKPlWuPKXz$f02c9bb48f3e1f0dd016da470de78b748786149bf80d35a29cb6e5441a13b261db700369e003c08f0afb433f030bdb39d1465b8716954fdc9fac55e3e7c80aac |
+|  5 | dhoni        | dhoni@gmail.com   | scrypt:32768:8:1$libeAtF0216cZwB2$08f5f8e46dca01ab33f8cff58e448015327bb61f76d5533f18a556e77bcdc5ef40f5968322906959b6404a1debbf6241b513ad6ce178d89429c3cc5a411cebad |
++----+--------------+-------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql>
+python app.py

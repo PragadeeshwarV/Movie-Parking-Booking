@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Slot Reservation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            text-shadow: 1px 1px 5px #00ffea;
+        }
+
+        h2 {
+            font-size: 22px;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+        }
+
+        .form-container input,
+        .form-container select,
+        .form-container button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(20, 20, 20, 0.8);
+            color: #e0e0e0;
+        }
+
+        .parking-lot {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .parking-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            max-width: 400px;
+        }
+
+        .parking-slot {
+            width: 60px;
+            height: 60px;
+            font-size: 14px;
+            background-color: #ff0101;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+
+        .parking-slot.selected {
+            background-color: lightgrey !important;
+            border: 2px solid #00ffea;
+            box-shadow: 0 0 10px #00ffea;
+        }
+
+        .parking-slot.occupied {
+            background-color: #ff0000;
+            cursor: not-allowed;
+        }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Parking Slot Reservation</h1>
+    <div class="form-container">
+        <input type="text" id="phoneNumber" placeholder="Enter Phone Number" maxlength="10">
+        <input type="text" id="vehicleNumber" placeholder="Enter Vehicle Number (e.g., TN 08 2004)" maxlength="15">
+        <select id="vehicleType">
+            <option value="car">Car (₹50/hour)</option>
+            <option value="bike">Bike (₹30/hour)</option>
+        </select>
+        <input type="number" id="bookingHours" placeholder="Hours (2 to 5)" min="2" max="5">
+        <button id="reserveButton">Reserve Slot</button>
+        <button onclick="goBack()">⬅ Back to Seats</button>
+    </div>
+
+    <div class="parking-lot" id="parkingLotCar">
+        <h2>Car Parking</h2>
+        <div class="parking-row" id="carSlots"></div>
+    </div>
+
+    <div class="parking-lot" id="parkingLotBike">
+        <h2>Bike Parking</h2>
+        <div class="parking-row" id="bikeSlots"></div>
+    </div>
+
+    <script>
+        const carSlotsContainer = document.getElementById('carSlots');
+        const bikeSlotsContainer = document.getElementById('bikeSlots');
+        const vehicleType = document.getElementById('vehicleType');
+        const reserveButton = document.getElementById('reserveButton');
+
+        let selectedSlot = null;
+        let selectedType = null;
+
+        function createSlots(container, type, count) {
+            for (let i = 1; i <= count; i++) {
+                const slot = document.createElement('div');
+                slot.classList.add('parking-slot');
+                slot.id = `${type}${i}`;
+                slot.textContent = `${type.toUpperCase()}${i}`;
+                slot.addEventListener('click', () => selectSlot(slot, type));
+                container.appendChild(slot);
+            }
+        }
+
+        function selectSlot(slot, type) {
+            if (slot.classList.contains('occupied')) return;
+
+            if (selectedSlot && selectedSlot !== slot) {
+                selectedSlot.classList.remove('selected');
+            }
+
+            selectedSlot = slot;
+            selectedType = type;
+            slot.classList.add('selected');
+
+            disableOtherType(type);
+        }
+
+        function disableOtherType(type) {
+            const oppositeType = type === "car" ? "bike" : "car";
+            document.querySelectorAll(`.parking-slot[id^="${oppositeType}"]`).forEach(slot => {
+                slot.classList.add('disabled');
+            });
+
+            document.querySelectorAll(`.parking-slot[id^="${type}"]`).forEach(slot => {
+                slot.classList.remove('disabled');
+            });
+        }
+
+        vehicleType.addEventListener('change', () => {
+            selectedSlot = null;
+            selectedType = null;
+            document.querySelectorAll('.parking-slot').forEach(slot => {
+                slot.classList.remove('selected', 'disabled');
+            });
+        });
+
+        reserveButton.addEventListener('click', () => {
+            if (!selectedSlot) {
+                alert('Please select a parking slot.');
+                return;
+            }
+
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const vehicleNumber = document.getElementById('vehicleNumber').value;
+            const bookingHours = parseInt(document.getElementById('bookingHours').value);
+
+            const phoneRegex = /^\d{10}$/;
+            const vehicleRegex = /^[A-Z]{2} \d{2} \d{4}$/;
+
+            if (!phoneRegex.test(phoneNumber)) {
+                alert('Invalid phone number (10 digits required).');
+                return;
+            }
+
+            if (!vehicleRegex.test(vehicleNumber)) {
+                alert('Invalid vehicle number format (e.g., TN 08 2004).');
+                return;
+            }
+
+            if (bookingHours < 2 || bookingHours > 5) {
+                alert('Booking hours must be between 2 to 5.');
+                return;
+            }
+
+            const parkprice = selectedType === "car" ? bookingHours * 50 : bookingHours * 30;
+            sessionStorage.setItem('parkprice', parkprice);
+
+            selectedSlot.classList.add('occupied');
+            selectedSlot.textContent = "🚫";
+            alert(`Slot Reserved!\nPhone: ${phoneNumber}\nVehicle: ${vehicleNumber}\nHours: ${bookingHours}\nTotal Price: ₹${parkprice}`);
+
+            selectedSlot.classList.remove('selected');
+            selectedSlot = null;
+            selectedType = null;
+
+            document.querySelectorAll('.parking-slot').forEach(slot => {
+                slot.classList.remove('disabled');
+            });
+        });
+
+        function goBack() {
+            const params = new URLSearchParams(window.location.search);
+            const fromPage = params.get("from");
+            if (fromPage) {
+                window.location.href = "/" + fromPage;
+            } else {
+                window.location.href = "/coolie2"; // default fallback
+            }
+        }
+
+        createSlots(carSlotsContainer, "car", 15);
+        createSlots(bikeSlotsContainer, "bike", 15);
+    </script>
+
+</body>
+</html>
